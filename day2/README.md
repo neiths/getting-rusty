@@ -1,3 +1,5 @@
+# 🚀 Day 2 - Learning Rust
+
 1. celsius to fahrenheit:
 
    F = (C \* 9/5) + 32
