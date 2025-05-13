@@ -1,8 +1,1 @@
-wadljadjwqdlknaldasdjk kad
- akdsak alskdja
-  kasdj
-   kadsajda 
-
-   alskdja djkasdadkj 
-   jadkasdj 
-   a jak Dayda jadkasdjd jad;
+In Rust, you can split a string into individual characters using the .chars() method

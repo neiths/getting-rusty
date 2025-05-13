@@ -33,8 +33,45 @@ fn main() {
     //count words
     let word_count = count_word(&contents);
     println!("Word count: {}", word_count);
+
+    let char_count = count_character(&contents);
+    println!("character count: {}", char_count);
+
+    println!("show each character in the text: \n");
+    print_each_char(&contents);
+
+    println!("finding word in contents");
+
+    let a: &str = find_word("thien", &contents);
+    println!("case 1: {}", a);
+
+    let b: &str = find_word("individual", &contents);
+    println!("case 2: {}", b);
 }
 
 fn count_word(text: &str) -> usize {
     text.split_whitespace().count()
+}
+
+fn count_character(text: &str) -> usize {
+    let chars: Vec<char> = text.chars().collect();
+    chars.len()
+}
+
+fn print_each_char(text: &str) {
+    for c in text.chars() {
+        print!("{} ", c);
+    }
+}
+
+fn find_word<'a>(keyword: &str, text: &'a str) -> &'a str {
+    for word in text.split_whitespace() {
+        if word == keyword {
+            println!("found!");
+            return word;
+        }
+    }
+
+    println!("not found!");
+    return "";
 }
