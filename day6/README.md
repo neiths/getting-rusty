@@ -51,5 +51,3 @@ struct BmiRequest {
 ```bash
 { "weight": 60, "height": 1.7 }
 ```
-
-

@@ -32,16 +32,24 @@ struct BmiResponse {
 
 #[tokio::main] // this macro sets up the Tokio async runtime
 async fn main() {
+
+    // create a new router and define a single POST route at "/bmi"
     let app = Router::new().route("/bmi", post(calculate_bmi_handler));
 
+    // Define the server address as localhost:3000
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("Server running at http://{}", addr);
 
+    // creat a tcp listener bound to the address
     let listener = TcpListener::bind(addr).await.unwrap();
+    
+    // start the server with our app
     axum::serve(listener, app).await.unwrap();
 }
 
 async fn calculate_bmi_handler(Json(payload): Json<BmiRequest>) -> Json<BmiResponse> {
+    
+    // check for invalid height (division by zero)
     if payload.height == 0.0 {
         return Json(BmiResponse {
             bmi: 0.0,
@@ -49,14 +57,16 @@ async fn calculate_bmi_handler(Json(payload): Json<BmiRequest>) -> Json<BmiRespo
         });
     }
 
+    // calculate BMI and determine category
     let bmi = calculate_bmi(payload.weight, payload.height);
     let category = classify_bmi(bmi);
 
+    // return the response as JSON
     Json(BmiResponse { bmi, category })
 }
 
 fn calculate_bmi(weight: f64, height: f64) -> f64 {
-    weight / (height * height)
+    weight / (height * height) // BMI formula: weight(kg) / height^2(m^2)
 }
 
 fn classify_bmi(bmi: f64) -> &'static str {
