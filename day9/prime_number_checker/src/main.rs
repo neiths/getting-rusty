@@ -53,10 +53,13 @@ fn is_prime(n: u32) -> bool {
 
     let limit = (n as u64).isqrt() as u32 + 1;
 
+    println!("limit is {}", limit);
+
     for i in 3..limit {
         if n % i == 0 {
             return false;
         }
+        println!("checked number in limit: {} % {} = {}", n, i, n % i);
     }
 
     return true;
