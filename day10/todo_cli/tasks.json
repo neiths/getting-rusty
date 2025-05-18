@@ -8,5 +8,10 @@
     "id": "03af07e8-32b7-498c-9299-b20f1f043d8f",
     "description": "finish to-do list cli app",
     "completed": true
+  },
+  {
+    "id": "cfbbb700-d19a-485a-8e05-74af265a9466",
+    "description": "testing",
+    "completed": true
   }
 ]

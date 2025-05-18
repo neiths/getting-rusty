@@ -1,5 +1,27 @@
 # 🚀 Day 10 - Learning Rust
 
+## improved output
+
+### startup cli
+
+![alt text](assets/image.png)
+
+### view tasks
+
+![alt text](assets/image-1.png)
+
+### Add task
+
+![alt text](assets/image-2.png)
+
+### Mark task
+
+![alt text](assets/image-3.png)
+
+### Exit
+
+![alt text](assets/image-4.png)
+
 ## output
 
 ```bash
