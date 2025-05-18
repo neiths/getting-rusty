@@ -8,4 +8,4 @@ deser = { version = "0.8.0", features = ["derive"]}
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 colored = "3.0.0"
-
+uuid = { version = "1.4", features = ["v4"] }

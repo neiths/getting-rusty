@@ -2,10 +2,11 @@ use std::fs::{self, File};
 use std::io::{self, Write};
 use serde::{Serialize, Deserialize};
 use colored::*;
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Task {
-    id: usize,
+    id: String,
     description: String,
     completed: bool,
 }
@@ -76,7 +77,7 @@ fn save_tasks(tasks: &Vec<Task>) {
 fn add_task(tasks: &mut Vec<Task>) {
     let description = get_input("Enter task description: ");
 
-    let id = tasks.len() + 1;
+    let id = Uuid::new_v4().to_string();
 
     tasks.push(
         Task {
