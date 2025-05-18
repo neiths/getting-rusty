@@ -15,6 +15,8 @@ fn main() {
     let mut tasks: Vec<Task> = load_tasks();
 
     loop {
+
+        clear_screen();
         
         println!("{}", "============================".cyan());
         println!("{}", "      TO-DO LIST MENU       ".bold().yellow());
@@ -88,6 +90,7 @@ fn add_task(tasks: &mut Vec<Task>) {
     );
 
     println!("{}", "✅ Task added successfully!".green().bold());
+    pause();
 }
 
 fn view_tasks(tasks:  &Vec<Task>) {
@@ -113,12 +116,13 @@ fn view_tasks(tasks:  &Vec<Task>) {
     }
 
     println!();
+    pause();
 }
 
 fn mark_task_complete(tasks: &mut Vec<Task>) {
     let id = get_input("Enter task ID to mark as complete: ");
 
-    if let Ok(id) = id.trim().parse::<usize>() {
+    if let Ok(id) = id.trim().parse::<String>() {
         if let Some(task) = tasks.iter_mut().find(|t| t.id == id) {
             task.completed = true;
             println!("{}", "✅ Task marked as complete!".green().bold());
@@ -128,12 +132,13 @@ fn mark_task_complete(tasks: &mut Vec<Task>) {
     } else {
         println!("{}", "🚫 Invalid task ID.".red());
     }
+    pause();
 }
 
 fn delete_task(tasks: &mut Vec<Task>) {
     let id = get_input("Enter task ID to delete: ");
 
-    if let Ok(id) = id.trim().parse::<usize>() {
+    if let Ok(id) = id.trim().parse::<String>() {
         if let Some(index) = tasks.iter().position(|t| t.id == id) {
             tasks.remove(index);
             println!("{}", "🗑️ Task deleted successfully.".green().bold());
@@ -143,4 +148,14 @@ fn delete_task(tasks: &mut Vec<Task>) {
     } else {
         println!("{}", "🚫 Invalid task ID.".red());
     }
+    pause();
+}
+
+fn clear_screen() {
+    std::process::Command::new("clear").status().unwrap();
+}
+
+fn pause() {
+    println!("{}", "\nPress Enter to continue...".dimmed());
+    let _ = io::stdin().read_line(&mut String::new());
 }
