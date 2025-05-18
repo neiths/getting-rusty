@@ -2,11 +2,11 @@
   {
     "id": 2,
     "description": "cooking",
-    "completed": false
+    "completed": true
   },
   {
-    "id": 3,
-    "description": "soaking in the bathtub",
+    "id": 2,
+    "description": "coding rust",
     "completed": false
   }
 ]

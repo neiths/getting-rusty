@@ -1,6 +1,7 @@
 use std::fs::{self, File};
 use std::io::{self, Write};
 use serde::{Serialize, Deserialize};
+use colored::*;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Task {
@@ -14,12 +15,15 @@ fn main() {
 
     loop {
         
-        println!("To-do list Menu: ");
-        println!("1. Add task");
-        println!("2. View Tasks");
-        println!("3. Mark task as complete");
-        println!("4. Delete task");
-        println!("5. Exit");
+        println!("{}", "============================".cyan());
+        println!("{}", "      TO-DO LIST MENU       ".bold().yellow());
+        println!("{}", "============================".cyan());
+        println!("1. {}", "Add task".green());
+        println!("2. {}", "View tasks".green());
+        println!("3. {}", "Mark task as complete".green());
+        println!("4. {}", "Delete task".green());
+        println!("5. {}", "Exit".red());
+        println!("{}", "----------------------------".cyan());
 
         let choice = get_input("Enter your choice: ");
 
@@ -30,10 +34,10 @@ fn main() {
             "4" => delete_task(&mut tasks),
             "5" => {
                 save_tasks(&tasks);
-                println!("Tasks saved. Bye!!!!!");
+                println!("{}", "Tasks saved. Goodbye! 👋".bold().blue());
                 break;
             }
-            _ => println!("Invalid choice. Please try again"),
+            _ => println!("{}", "Invalid choice. Please try again.".red()),
         }
     }
 }
@@ -82,18 +86,32 @@ fn add_task(tasks: &mut Vec<Task>) {
         }
     );
 
-    println!("task added");
+    println!("{}", "✅ Task added successfully!".green().bold());
 }
 
 fn view_tasks(tasks:  &Vec<Task>) {
+    println!("\n{}", "====== TASK LIST ======".bold().blue());
+
     if tasks.is_empty() {
         println!("No tasks found");
     } else {
         for task in tasks {
-            let status = if task.completed {"ok"} else {"not"};
-            println!("{} - {} - {}", task.id, status, task.description);
+            let status = if task.completed {
+                "✅ Completed".green()
+            } else {
+                "❌ Not done".red()
+            };
+
+            println!(
+                "{}. [{}] {}",
+                task.id.to_string().yellow().bold(),
+                status,
+                task.description.bold()
+            );
         }
     }
+
+    println!();
 }
 
 fn mark_task_complete(tasks: &mut Vec<Task>) {
@@ -102,26 +120,26 @@ fn mark_task_complete(tasks: &mut Vec<Task>) {
     if let Ok(id) = id.trim().parse::<usize>() {
         if let Some(task) = tasks.iter_mut().find(|t| t.id == id) {
             task.completed = true;
-            println!("task marked as complete");
+            println!("{}", "✅ Task marked as complete!".green().bold());
         } else {
-            println!("task not found");
+            println!("{}", "⚠️ Task not found.".red());
         }
     } else {
-        println!("invalid task ID");
+        println!("{}", "🚫 Invalid task ID.".red());
     }
 }
 
 fn delete_task(tasks: &mut Vec<Task>) {
-    let id = get_input("Enter task Id to delete");
+    let id = get_input("Enter task ID to delete: ");
 
     if let Ok(id) = id.trim().parse::<usize>() {
         if let Some(index) = tasks.iter().position(|t| t.id == id) {
             tasks.remove(index);
-            println!("task deleted");
+            println!("{}", "🗑️ Task deleted successfully.".green().bold());
         } else {
-            println!("task not found");
+            println!("{}", "⚠️ Task not found.".red());
         }
     } else {
-        println!("invalid task ID");
+        println!("{}", "🚫 Invalid task ID.".red());
     }
 }
