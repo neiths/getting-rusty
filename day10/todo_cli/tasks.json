@@ -1,12 +1,12 @@
 [
   {
-    "id": "2e6f2598-f252-4191-87f1-827bdc99ee24",
-    "description": "test uuid",
-    "completed": false
-  },
-  {
     "id": "05272f4e-8da9-4bb2-9afd-91b57d3037b7",
     "description": "test clearing screen",
-    "completed": false
+    "completed": true
+  },
+  {
+    "id": "03af07e8-32b7-498c-9299-b20f1f043d8f",
+    "description": "finish to-do list cli app",
+    "completed": true
   }
 ]

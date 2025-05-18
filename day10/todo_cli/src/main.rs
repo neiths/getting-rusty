@@ -106,9 +106,11 @@ fn view_tasks(tasks:  &Vec<Task>) {
                 "❌ Not done".red()
             };
 
+            let short_id = &task.id[..6];
+
             println!(
                 "{}. [{}] {}",
-                task.id.to_string().yellow().bold(),
+                short_id.yellow().bold(),
                 status,
                 task.description.bold()
             );
@@ -120,34 +122,38 @@ fn view_tasks(tasks:  &Vec<Task>) {
 }
 
 fn mark_task_complete(tasks: &mut Vec<Task>) {
-    let id = get_input("Enter task ID to mark as complete: ");
 
-    if let Ok(id) = id.trim().parse::<String>() {
-        if let Some(task) = tasks.iter_mut().find(|t| t.id == id) {
-            task.completed = true;
-            println!("{}", "✅ Task marked as complete!".green().bold());
-        } else {
-            println!("{}", "⚠️ Task not found.".red());
-        }
+    println!("List of tasks: ");
+
+    view_tasks(&tasks);
+
+    let id = get_input("Enter task ID to mark as complete: ").trim().to_string();
+
+    if let Some(task) = tasks.iter_mut().find(|t| t.id.starts_with(&id)) {
+        task.completed = true;
+        println!("{}", "✅ Task marked as complete!".green().bold());
     } else {
-        println!("{}", "🚫 Invalid task ID.".red());
+        println!("{}", "⚠️ Task not found.".red());
     }
+
     pause();
 }
 
 fn delete_task(tasks: &mut Vec<Task>) {
-    let id = get_input("Enter task ID to delete: ");
 
-    if let Ok(id) = id.trim().parse::<String>() {
-        if let Some(index) = tasks.iter().position(|t| t.id == id) {
-            tasks.remove(index);
-            println!("{}", "🗑️ Task deleted successfully.".green().bold());
-        } else {
-            println!("{}", "⚠️ Task not found.".red());
-        }
+    println!("List of tasks: ");
+
+    view_tasks(&tasks);
+
+    let id = get_input("Enter task ID to delete: ").trim().to_string();
+
+    if let Some(index) = tasks.iter().position(|t| t.id.starts_with(&id)) {
+        tasks.remove(index);
+        println!("{}", "🗑️ Task deleted successfully.".green().bold());
     } else {
-        println!("{}", "🚫 Invalid task ID.".red());
+        println!("{}", "⚠️ Task not found.".red());
     }
+
     pause();
 }
 
