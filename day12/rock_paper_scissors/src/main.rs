@@ -1,35 +1,38 @@
 use std::io;
 use rand::Rng;
-
+use colored::*;
 
 fn main() {
-    println!("Welcome to Rock-Paper_Scissors");
-    println!("Instructions: Enter 'rock, 'paper', or 'scissors'. Type 'quit' to exit");
+    println!("{}", "🎮 Welcome to Rock-Paper-Scissors!".bold().cyan());
+    println!("{}", "Instructions: Type 'rock', 'paper', or 'scissors'. Type 'quit' to exit.".dimmed());
 
     loop {
-        println!("\n rock-paper-scissors make you choice.");
+        println!("\n👉 Make your choice:");
 
         let user_choice = get_user_choice();
 
         if user_choice == "quit" {
-            println!("thanks for playing, goodbye");
+            println!("{}", "👋 Thanks for playing, goodbye!".green().bold());
             break;
         }
 
         let computer_choice = get_computer_choice();
 
-        println!("Computer chose: {}", computer_choice);
+        println!("🤖 Computer chose: {}", computer_choice.yellow());
 
         match determine_winner(&user_choice, &computer_choice) {
-            GameResult::Win => println!("You win"),
-            GameResult::Lose => println!("You lost"),
-            GameResult::Draw => println!("It's a draw"),
+            GameResult::Win => println!("{}", "🎉 You win!".green().bold()),
+            GameResult::Lose => println!("{}", "😢 You lost.".red().bold()),
+            GameResult::Draw => println!("{}", "🤝 It's a draw.".blue().bold()),
         }
     }
 }
 
 fn get_user_choice() -> String {
     let mut choice = String::new();
+
+    print!("> ");
+    io::Write::flush(&mut io::stdout()).unwrap(); // flush the prompt
 
     io::stdin()
         .read_line(&mut choice)
@@ -40,7 +43,7 @@ fn get_user_choice() -> String {
     match choice.as_str() {
         "rock" | "paper" | "scissors" | "quit" => choice,
         _ => {
-            println!("Invalid choice, please input rock, paper, scissors, quit");
+            println!("{}", "❌ Invalid choice! Try: rock, paper, scissors, or quit.".red());
             get_user_choice()
         }
     }

@@ -1,5 +1,30 @@
 # 🚀 Day 12 - Learning Rust
 
+## better output 
+```bash
+🎮 Welcome to Rock-Paper-Scissors!
+Instructions: Type 'rock', 'paper', or 'scissors'. Type 'quit' to exit.
+
+👉 Make your choice:
+> rock
+🤖 Computer chose: scissors
+🎉 You win!
+
+👉 Make your choice:
+> paper
+🤖 Computer chose: scissors
+😢 You lost.
+
+👉 Make your choice:
+> scissors
+🤖 Computer chose: paper
+🎉 You win!
+
+👉 Make your choice:
+> quit
+👋 Thanks for playing, goodbye!
+```
+
 ## output
 
 ```bash
