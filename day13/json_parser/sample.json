@@ -1,0 +1,179 @@
+{
+    "total": 6,
+    "num_success": 2,
+    "file_name": "Import_KnowledgeBase_example.xlsx",
+    "input_data": [
+        {
+            "title": "Làm sao để liên hệ bộ phận hỗ trợ?",
+            "content": "Bạn có thể liên hệ bộ phận hỗ trợ qua email support@tencongty.com hoặc hotline 19001909 ạ",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": false
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": false
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": true
+        },
+        {
+            "title": "Shop có chương trình khuyến mãi không?",
+            "content": "Shop thường xuyên có khuyến mãi, bạn theo dõi fanpage để cập nhật sớm nhất",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": false
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": false
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": true
+        },
+        {
+            "title": "Shop có hỗ trợ đổi hàng không?",
+            "content": "Có, shop hỗ trợ đổi hàng trong vòng 7 ngày kể từ khi nhận hàng",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": false
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": false
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": true
+        },
+        {
+            "title": "Thời gian giao hàng là bao lâu?",
+            "content": "Thời gian giao hàng từ 2–5 ngày tùy khu vực. Nội thành thường giao 1–2 ngày",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": false
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": false
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": true
+        },
+        {
+            "title": "Sản phẩm có bảo hành không?",
+            "content": "Shop không áp dụng bảo hành, nhưng hỗ trợ đổi trả nếu có lỗi từ nhà sản xuất",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": false
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": false
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": true
+        },
+        {
+            "title": "qưqw",
+            "content": null,
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": true
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": true
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": false
+        },
+        {
+            "title": "aaa",
+            "content": "aaa",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": false
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": true
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": false
+        },
+        {
+            "title": null,
+            "content": "aaa",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": true
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": true
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": false
+                }
+            ],
+            "enable": false
+        },
+        {
+            "title": "chính sách đánh khách 3",
+            "content": "không trả hàng cho khách trong bat cu truong hop nao",
+            "errors": [
+                {
+                    "key": "MISSING_REQUIRED_COLUMNS",
+                    "value": false
+                },
+                {
+                    "key": "INVALID_STATUS",
+                    "value": false
+                },
+                {
+                    "key": "DUPLICATE_TITLE_NAME",
+                    "value": true
+                }
+            ],
+            "enable": false
+        }
+    ],
+    "status": "SUCCESS"
+}

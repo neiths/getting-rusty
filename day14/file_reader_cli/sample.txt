@@ -1,0 +1,5 @@
+When you're building a CI/CD pipeline, the platform you choose can have a huge impact on your team's ability to ship software effectively. It's a critical decision that often comes down to a choice between established tools like Jenkins and newer ones like GitHub Actions — two tools that represent fundamentally different approaches to the challenges of software delivery today.
+
+The landscape is shifting dramatically as well. According to recent surveys, GitHub Actions has surpassed Jenkins in developer adoption, despite that Jenkins still holds over 40% of the CI/CD market overall. This evolution reflects changing priorities in how engineering teams approach automation and deployment.
+
+In this post, we'll explore both Jenkins and GitHub Actions from a practical perspective to help you make an informed choice that best suits your team. We'll go beyond just the technical capabilities to consider organizational factors like learning curve, maintenance requirements, and overall integration with your existing systems.
