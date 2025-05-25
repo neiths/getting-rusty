@@ -10,25 +10,42 @@ struct LinkedList {
 }
 
 impl LinkedList {
+
+    // create empty linked list
     fn new() -> Self {
         LinkedList { head: None }
     }
 
+    // add a new node in front of linked list
     fn push_front(&mut self, val: i32) {
+
+        // create a new node, and then its next -> first element in linked list
         let new_node = Box::new(Node {
             value: val,
             next: self.head.take(),
         });
+
+        // turn the node into head
         self.head = Some(new_node);
     }
 
     fn push_back(&mut self, val: i32) {
+
+        // create a new node
         let new_node = Box::new(Node { value: val, next: None });
         
+        // and then loop all elements
         match &mut self.head {
+
+            // if head is None, then set the new node as head
+            // otherwise, find the last node and set its next to the new node
             None => self.head = Some(new_node),
             Some(_) => {
                 let mut current = self.head.as_mut().unwrap();
+
+                // is_some() method is called on an Option type in Rust. 
+                // It returns true if the Option is Some(value) 
+                // (i.e., it contains a value), and false if it is None.
                 while current.next.is_some() {
                     current = current.next.as_mut().unwrap();
                 }
@@ -105,4 +122,19 @@ fn main() {
     println!("Deleting 20...");
     list.delete(20);
     list.print(); // List: 10 -> 30 -> None
+
+    let mut list2 = LinkedList::new();
+
+    list2.push_front(1);
+    list2.push_front(2);
+    list2.push_front(3);
+    list2.push_back(4);
+    list2.print(); // List: 3 -> 2 -> 1 -> 4 -> None
+
+
+    list2.push_back(5);
+    list2.print(); // List: 3 -> 2 -> 1 -> 4 -> 5 -> None
+
+    list2.delete(4);
+    list2.print(); // List: 3 -> 2 -> 1 -> 5 -> None
 }
