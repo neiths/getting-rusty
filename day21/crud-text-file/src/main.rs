@@ -8,9 +8,10 @@ fn main() {
         println!("Text File CRUD Menu: ");
         println!("1. Create (overwrite)");
         println!("2. Read");
-        println!("3. Update line");
+        println!("3. Update line (existing line)");
         println!("4. Delete line");
-        println!("5. Exit");
+        println!("5. Append content");
+        println!("6. Exit");
 
         match input("Choose an option: ").as_str() {
             "1" => {
@@ -49,6 +50,21 @@ fn main() {
             },
 
             "5" => {
+                let content = multiline_input("Enter content to append");
+
+                let mut file = OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(FILE_PATH)
+                    .expect("Failed to open file for appending");
+
+                writeln!(file, "{}", content.trim_end())
+                    .expect("Failed to append content");
+
+                println!("Content appended to file");
+            },  
+
+            "6" => {
                 println!("Exiting...");
                 break;
             },
