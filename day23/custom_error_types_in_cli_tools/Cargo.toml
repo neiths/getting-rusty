@@ -1,0 +1,6 @@
+[package]
+name = "custom_error_types_in_cli_tools"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
