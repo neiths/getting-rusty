@@ -1,6 +1,6 @@
 
 use std::env::current_exe;
-use std::io::{BufWriter, BufReader, Write};
+use std::io::{BufWriter, BufReader};
 use std::fs::{File};
 use std::path::Path;
 use serde::{Serialize, Deserialize};
@@ -161,6 +161,24 @@ struct SettingsInJson {
 }
 
 impl SettingsInJson {
+    fn normalize_asset_folder(asset_folder: &str) -> String {
+        let path = Path::new(asset_folder);
+        if path.is_absolute() && path.exists() {
+            return asset_folder.to_string();
+        }
+
+        let candidate = Path::new("src/bin/assets");
+        if candidate.exists() {
+            return candidate.to_string_lossy().into_owned();
+        }
+
+        if path.exists() {
+            return asset_folder.to_string();
+        }
+
+        "src/bin/assets".to_string()
+    }
+
     pub fn default_settings() -> SettingsInJson {
         let mut tiles_colors = Vec::<Vec<f32>>::new();
         // empty color
@@ -184,7 +202,7 @@ impl SettingsInJson {
         // 512 color
         tiles_colors.push(vec![237.0, 200.0, 80.0]);
         SettingsInJson {
-            asset_folder: "bin/assets".to_string(),
+            asset_folder: "src/bin/assets".to_string(),
             window_background_color: vec![255.0, 248.0, 239.0],
             comment1_offset_y: 72.0,
             comment2_offset_y: 100.0,
@@ -245,8 +263,11 @@ impl SettingsInJson {
             let reader = BufReader::new(file.unwrap());
         // End FIXME
 
-        match serde_json::from_reader(reader) {
-            Ok(s) => s,
+        match serde_json::from_reader::<_, SettingsInJson>(reader) {
+            Ok(mut s) => {
+                s.asset_folder = SettingsInJson::normalize_asset_folder(&s.asset_folder);
+                s
+            }
             Err(e) => {
                 println!("Failed to decode settings.json ({}). Using defaults.", e);
                 let default = SettingsInJson::default_settings();

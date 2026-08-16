@@ -69,8 +69,11 @@ impl<'a> App<'a> {
     }
 
     pub fn load(&mut self) {
-        let mut asset_root = PathBuf::new();
-        asset_root.push(Path::new(&self.settings.asset_folder));
+        let asset_root = if Path::new(&self.settings.asset_folder).is_absolute() {
+            PathBuf::from(&self.settings.asset_folder)
+        } else {
+            Path::new(env!("CARGO_MANIFEST_DIR")).join(&self.settings.asset_folder)
+        };
 
         let mut logo_path = asset_root.clone();
         logo_path.push(Path::new("logo.png"));
@@ -79,7 +82,7 @@ impl<'a> App<'a> {
         let mut comment2_path = asset_root.clone();
         comment2_path.push(Path::new("comment2.png"));
 
-        self.number_renderer = Some(NumberRenderer::new());
+        self.number_renderer = Some(NumberRenderer::new_with_asset_root(asset_root.clone()));
         let texture_settings = TextureSettings::new();
         self.logo = Some(GlTexture::from_path(&logo_path, &texture_settings).unwrap());
         self.comment1 = Some(GlTexture::from_path(&comment1_path, &texture_settings).unwrap());

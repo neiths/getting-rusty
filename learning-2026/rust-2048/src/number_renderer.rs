@@ -12,11 +12,16 @@ pub struct NumberRenderer {
 
 impl NumberRenderer {
     pub fn new() -> NumberRenderer {
+        let asset_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("src/bin/assets");
+        NumberRenderer::new_with_asset_root(asset_root)
+    }
+
+    pub fn new_with_asset_root<P: AsRef<Path>>(asset_root: P) -> NumberRenderer {
+        let mut path = asset_root.as_ref().to_path_buf();
+        path.push("digits.png");
+
         NumberRenderer {
-            image: GlTexture::from_path(
-                    Path::new("bin/assets/digits.png"),
-                    &TextureSettings::new(),
-            ).unwrap(),
+            image: GlTexture::from_path(&path, &TextureSettings::new()).unwrap(),
         }
     }
 

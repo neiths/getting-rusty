@@ -1,18 +1,5 @@
-extern crate serde;
-extern crate serde_json;
-extern crate rand;
-extern crate piston_window;
-extern crate opengl_graphics;
-extern crate sdl2_window;
-
 use piston_window::*;
-use sdl2_window::Sdl2Window;
-
-mod app;
-mod board;
-mod number_renderer;
-mod settings;
-mod tile;
+use pistoncore_sdl2_window::Sdl2Window;
 
 fn main() {
 	use opengl_graphics::GlGraphics;	
