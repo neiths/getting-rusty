@@ -1,0 +1,7 @@
+[package]
+name = "tiktoken-rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tiktoken-rs = "0.6"
