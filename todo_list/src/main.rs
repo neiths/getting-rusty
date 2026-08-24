@@ -1,6 +1,14 @@
 use std::fs;
-use std::io;
+use std::io::{self, Write};
 use std::path::Path;
+
+const RESET: &str = "\x1b[0m";
+const BOLD: &str = "\x1b[1m";
+const BLUE: &str = "\x1b[34m";
+const CYAN: &str = "\x1b[36m";
+const GREEN: &str = "\x1b[32m";
+const RED: &str = "\x1b[31m";
+const YELLOW: &str = "\x1b[33m";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Todo {
@@ -100,15 +108,30 @@ impl TodoList {
 
     fn list(&self) {
         if self.todos.is_empty() {
-            println!("\nNo tasks yet. Add one to get started.\n");
+            println!("\n{}No tasks yet. Add one to get started.{}\n", YELLOW, RESET);
             return;
         }
 
-        println!("\n=== Your Tasks ===");
+        println!("\n{}=== Your Tasks ==={}", BOLD, RESET);
+        println!("{}ID{}  {}STATUS{}  TASK", BLUE, RESET, GREEN, RESET);
+        println!("{}--{}  {}------{}  -------------------------", BLUE, RESET, GREEN, RESET);
+
         for task in &self.todos {
-            let status = if task.completed { "[x]" } else { "[ ]" };
+            let status_text = if task.completed { "Done" } else { "Todo" };
+            let status_color = if task.completed { GREEN } else { YELLOW };
             let marker = if task.completed { "✓" } else { "•" };
-            println!("  {} {} {}  #{}", marker, status, task.title, task.id);
+
+            println!(
+                "{}{:>2}{}  {}{:>4}{}  {} {}",
+                BLUE,
+                task.id,
+                RESET,
+                status_color,
+                status_text,
+                RESET,
+                marker,
+                task.title
+            );
         }
         println!();
     }
@@ -216,27 +239,34 @@ mod tests {
     }
 }
 
+fn clear_screen() {
+    print!("\x1b[2J\x1b[H");
+    io::stdout().flush().unwrap();
+}
+
 fn show_menu() {
-    println!("\n╔══════════════════════════════╗");
-    println!("║        Todo Manager        ║");
-    println!("╚══════════════════════════════╝");
-    println!("  1) Add task");
-    println!("  2) View tasks");
-    println!("  3) Mark done");
-    println!("  4) Toggle task");
-    println!("  5) Delete task");
-    println!("  6) Summary");
-    println!("  7) Exit");
-    println!("\nSelect an option: ");
+    println!("{}╔══════════════════════════════╗{}", BLUE, RESET);
+    println!("{}║{} {}Todo Manager{} {}║{}", BLUE, RESET, BOLD, RESET, BLUE, RESET);
+    println!("{}╚══════════════════════════════╝{}", BLUE, RESET);
+    println!("{}  1){} Add task", CYAN, RESET);
+    println!("{}  2){} View tasks", CYAN, RESET);
+    println!("{}  3){} Mark done", CYAN, RESET);
+    println!("{}  4){} Toggle task", CYAN, RESET);
+    println!("{}  5){} Delete task", CYAN, RESET);
+    println!("{}  6){} Summary", CYAN, RESET);
+    println!("{}  7){} Exit", CYAN, RESET);
+    print!("\n{}Select an option: {}", YELLOW, RESET);
+    io::stdout().flush().unwrap();
 }
 
 fn show_summary(list: &TodoList) {
-    println!("\n=== Summary ===");
-    println!("Total tasks:   {}", list.total());
-    println!("Completed:     {}", list.completed_count());
-    println!("Pending:       {}", list.pending_count());
-    println!("Progress:      {:.0}%", if list.total() == 0 { 0.0 } else { (list.completed_count() as f64 / list.total() as f64) * 100.0 });
+    println!("\n{}=== Summary ==={}", BOLD, RESET);
+    println!("{}Total tasks:   {}{}", CYAN, list.total(), RESET);
+    println!("{}Completed:     {}{}", GREEN, list.completed_count(), RESET);
+    println!("{}Pending:       {}{}", YELLOW, list.pending_count(), RESET);
+    println!("{}Progress:      {:.0}%{}", BLUE, if list.total() == 0 { 0.0 } else { (list.completed_count() as f64 / list.total() as f64) * 100.0 }, RESET);
     println!();
+    io::stdout().flush().unwrap();
 }
 
 fn read_line() -> String {
@@ -250,20 +280,22 @@ fn main() {
     let mut list = TodoList::load(file_path);
 
     loop {
+        list.list();
         show_menu();
 
         let choice = read_line();
+        println!();
 
         match choice.as_str() {
             "1" => {
-                println!("Task title: ");
+                println!("{}Task title: {}", CYAN, RESET);
                 let title = read_line();
                 if !list.add(title) {
-                    println!("\nTask cannot be empty. Please enter a meaningful title.\n");
+                    println!("\n{}Task cannot be empty. Please enter a meaningful title.{}\n", RED, RESET);
                 } else {
-                    println!("\nTask added successfully.\n");
+                    println!("\n{}Task added successfully.{}\n", GREEN, RESET);
                     if let Err(err) = list.save(file_path) {
-                        println!("Failed to save tasks: {}", err);
+                        println!("{}Failed to save tasks: {}{}", RED, err, RESET);
                     }
                 }
             }
@@ -271,39 +303,45 @@ fn main() {
                 list.list();
             }
             "3" => {
-                println!("Task ID to mark as done: ");
+                println!("{}Task ID to mark as done: {}", CYAN, RESET);
                 let id: u32 = read_line().parse().unwrap_or(0);
                 list.complete(id);
                 if let Err(err) = list.save(file_path) {
-                    println!("Failed to save tasks: {}", err);
+                    println!("{}Failed to save tasks: {}{}", RED, err, RESET);
                 }
             }
             "4" => {
-                println!("Task ID to toggle: ");
+                println!("{}Task ID to toggle: {}", CYAN, RESET);
                 let id: u32 = read_line().parse().unwrap_or(0);
                 list.toggle(id);
                 if let Err(err) = list.save(file_path) {
-                    println!("Failed to save tasks: {}", err);
+                    println!("{}Failed to save tasks: {}{}", RED, err, RESET);
                 }
             }
             "5" => {
-                println!("Task ID to delete: ");
+                println!("{}Task ID to delete: {}", CYAN, RESET);
                 let id: u32 = read_line().parse().unwrap_or(0);
                 list.delete(id);
                 if let Err(err) = list.save(file_path) {
-                    println!("Failed to save tasks: {}", err);
+                    println!("{}Failed to save tasks: {}{}", RED, err, RESET);
                 }
             }
             "6" => {
                 show_summary(&list);
             }
             "7" => {
-                println!("\nGoodbye! Your tasks were saved.\n");
+                clear_screen();
+                println!("{}Goodbye! Your tasks were saved.{}", GREEN, RESET);
+                io::stdout().flush().unwrap();
                 break;
             }
             _ => {
-                println!("\nInvalid choice. Please choose a number from the menu.\n");
+                println!("\n{}Invalid choice. Please choose a number from the menu.{}\n", RED, RESET);
             }
         }
+
+        println!("{}Press Enter to continue...{}", YELLOW, RESET);
+        let _ = read_line();
+        io::stdout().flush().unwrap();
     }
 }
