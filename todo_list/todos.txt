@@ -1,0 +1,5 @@
+next_id:5
+1|false|speaking
+2|false|writting
+3|false|visting my uncle
+4|true|rust coding
