@@ -100,18 +100,17 @@ impl TodoList {
 
     fn list(&self) {
         if self.todos.is_empty() {
-            println!("No tasks yet!");
+            println!("\nNo tasks yet. Add one to get started.\n");
             return;
         }
 
-        println!("My todo List:");
+        println!("\n=== Your Tasks ===");
         for task in &self.todos {
-            println!(" {}: {} [{}]", 
-                task.id, 
-                task.title, 
-                if task.completed {"x"} else {" "}
-            );
+            let status = if task.completed { "[x]" } else { "[ ]" };
+            let marker = if task.completed { "✓" } else { "•" };
+            println!("  {} {} {}  #{}", marker, status, task.title, task.id);
         }
+        println!();
     }
 
     fn complete(&mut self, id: u32) {
@@ -218,21 +217,26 @@ mod tests {
 }
 
 fn show_menu() {
-    println!("\n=== Todo List Menu ===");
-    println!("1. Add a task");
-    println!("2. List tasks");
-    println!("3. Complete a task");
-    println!("4. Toggle a task");
-    println!("5. Delete a task");
-    println!("6. Show summary");
-    println!("7. Exit");
+    println!("\n╔══════════════════════════════╗");
+    println!("║        Todo Manager        ║");
+    println!("╚══════════════════════════════╝");
+    println!("  1) Add task");
+    println!("  2) View tasks");
+    println!("  3) Mark done");
+    println!("  4) Toggle task");
+    println!("  5) Delete task");
+    println!("  6) Summary");
+    println!("  7) Exit");
+    println!("\nSelect an option: ");
 }
 
 fn show_summary(list: &TodoList) {
-    println!("\nSummary:");
-    println!("Total tasks: {}", list.total());
-    println!("Completed: {}", list.completed_count());
-    println!("Pending: {}", list.pending_count());
+    println!("\n=== Summary ===");
+    println!("Total tasks:   {}", list.total());
+    println!("Completed:     {}", list.completed_count());
+    println!("Pending:       {}", list.pending_count());
+    println!("Progress:      {:.0}%", if list.total() == 0 { 0.0 } else { (list.completed_count() as f64 / list.total() as f64) * 100.0 });
+    println!();
 }
 
 fn read_line() -> String {
@@ -252,12 +256,12 @@ fn main() {
 
         match choice.as_str() {
             "1" => {
-                println!("Enter task title:");
+                println!("Task title: ");
                 let title = read_line();
                 if !list.add(title) {
-                    println!("Task cannot be empty.");
+                    println!("\nTask cannot be empty. Please enter a meaningful title.\n");
                 } else {
-                    println!("Task added successfully.");
+                    println!("\nTask added successfully.\n");
                     if let Err(err) = list.save(file_path) {
                         println!("Failed to save tasks: {}", err);
                     }
@@ -267,7 +271,7 @@ fn main() {
                 list.list();
             }
             "3" => {
-                println!("Enter task ID to complete:");
+                println!("Task ID to mark as done: ");
                 let id: u32 = read_line().parse().unwrap_or(0);
                 list.complete(id);
                 if let Err(err) = list.save(file_path) {
@@ -275,7 +279,7 @@ fn main() {
                 }
             }
             "4" => {
-                println!("Enter task ID to toggle:");
+                println!("Task ID to toggle: ");
                 let id: u32 = read_line().parse().unwrap_or(0);
                 list.toggle(id);
                 if let Err(err) = list.save(file_path) {
@@ -283,7 +287,7 @@ fn main() {
                 }
             }
             "5" => {
-                println!("Enter task ID to delete:");
+                println!("Task ID to delete: ");
                 let id: u32 = read_line().parse().unwrap_or(0);
                 list.delete(id);
                 if let Err(err) = list.save(file_path) {
@@ -294,11 +298,11 @@ fn main() {
                 show_summary(&list);
             }
             "7" => {
-                println!("Exiting...");
+                println!("\nGoodbye! Your tasks were saved.\n");
                 break;
             }
             _ => {
-                println!("Invalid choice, please try again.");
+                println!("\nInvalid choice. Please choose a number from the menu.\n");
             }
         }
     }
