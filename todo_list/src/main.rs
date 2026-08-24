@@ -1,3 +1,5 @@
+use std::io;
+
 struct Todo {
     id: u32,
     title: String,
@@ -68,19 +70,55 @@ impl TodoList {
     }
 }
 
+fn show_menu() {
+    println!("Todo List Menu:");
+    println!("1. Add a task");
+    println!("2. List tasks");
+    println!("3. Complete a task");
+    println!("4. Delete a task");
+    println!("5. Exit");
+}
+
+fn read_line() -> String {
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    input.trim().to_string()
+}
 
 fn main() {
     let mut list = TodoList::new();
 
-    list.add(String::from("Learn Rust"));
-    list.add(String::from("Build a todo app"));
-    list.add(String::from("Profit!"));
-    list.list();
+    loop {
+        show_menu();
 
-    list.complete(1);
-    list.list();
+        let choice = read_line();
 
-    list.delete(2);
-    list.complete(3);
-    list.list();
+        match choice.as_str() {
+            "1" => {
+                println!("Enter task title:");
+                let title = read_line();
+                list.add(title);
+            }
+            "2" => {
+                list.list();
+            }
+            "3" => {
+                println!("Enter task ID to complete:");
+                let id: u32 = read_line().parse().unwrap_or(0);
+                list.complete(id);
+            }
+            "4" => {
+                println!("Enter task ID to delete:");
+                let id: u32 = read_line().parse().unwrap_or(0);
+                list.delete(id);
+            }
+            "5" => {
+                println!("Exiting...");
+                break;
+            }
+            _ => {
+                println!("Invalid choice, please try again.");
+            }
+        }
+    }
 }
