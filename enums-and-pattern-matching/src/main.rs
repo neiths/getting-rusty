@@ -51,6 +51,13 @@ impl IpAddr {
     }
 }
 
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(i) => Some(i+1),
+    }
+}
+
 fn main() {
     let localhost = IpAddr::new(IpAddrKind::V4(127, 0, 0, 1), "localhost");
     let home = IpAddr::new(IpAddrKind::V6(0, 0, 0, 0), "home");
@@ -72,5 +79,23 @@ fn main() {
     for message in messages {
         message.describe();
         println!("------------------------------");
+    }
+
+    let five = Some(5);
+    let six = plus_one(five);
+    let none = plus_one(None);
+
+    println!("five: {:?}, six: {:?}, none: {:?}", five, six, none);
+
+    let some_value = None;
+    match some_value {
+        Some(10) => println!("Matched Some(10)"),
+        _ => println!("Did not match Some(10)"),
+    }
+
+    if let Some(10) = some_value {
+        println!("Matched Some(10) using if let");
+    } else {
+        println!("Did not match Some(10) using if let");
     }
 }
