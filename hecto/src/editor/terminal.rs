@@ -1,14 +1,14 @@
-use crossterm::{queue, Command};
-use crossterm::style::Print;
-use crossterm::cursor::{MoveTo, Hide, Show};
-use crossterm::terminal::{Clear, ClearType, disable_raw_mode, enable_raw_mode, size};
-use std::io::{stdout, Error, Write};
 use core::fmt::Display;
+use crossterm::cursor::{Hide, MoveTo, Show};
+use crossterm::style::Print;
+use crossterm::terminal::{Clear, ClearType, disable_raw_mode, enable_raw_mode, size};
+use crossterm::{Command, queue};
+use std::io::{Error, Write, stdout};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Size {
-    pub height: u16,
-    pub width: u16,
+    pub height: usize,
+    pub width: usize,
 }
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -20,35 +20,35 @@ pub struct Position {
 pub struct Terminal;
 
 impl Terminal {
-    pub fn initialize() -> Result<(), Error> {
-        enable_raw_mode()?;
-        Self::clear_screen()?;
-        Self::move_cursor_to(Position { col: 0, row: 0 })?;
-        Self::execute()
-    }
-
     pub fn terminate() -> Result<(), Error> {
         Self::execute()?;
         disable_raw_mode()
     }
 
+    pub fn initialize() -> Result<(), Error> {
+        enable_raw_mode()?;
+        Self::clear_screen()?;
+        Self::execute()
+    }
+
     pub fn clear_screen() -> Result<(), Error> {
         Self::queued_command(Clear(ClearType::All))
     }
-    
+
     pub fn clear_line() -> Result<(), Error> {
         Self::queued_command(Clear(ClearType::CurrentLine))
     }
 
-    pub fn move_cursor_to(position: Position) -> Result<(), Error> {
-        Self::queued_command(MoveTo(position.col, positon.row))
+    pub fn move_caret_to(position: Position) -> Result<(), Error> {
+        #[allow(clippy::as_conversions, clippy::cast_possible_truncation)]
+        Self::queued_command(MoveTo(position.col as u16, position.row as u16))
     }
 
-    pub fn hide_cursor() -> Result<(), Error> {
+    pub fn hide_caret() -> Result<(), Error> {
         Self::queued_command(Hide)
     }
 
-    pub fn show_cursor() -> Result<(), Error> {
+    pub fn show_caret() -> Result<(), Error> {
         Self::queued_command(Show)
     }
 
@@ -57,8 +57,15 @@ impl Terminal {
     }
 
     pub fn size() -> Result<Size, Error> {
-        let (width, height) = size()?;
-        Ok(Size {height, width})
+        let (width_u16, height_u16) = size()?;
+
+        #[allow(clippy::as_conversions)]
+        let height = height_u16 as usize;
+
+        #[allow(clippy::as_conversions)]
+        let width = width_u16 as usize;
+
+        Ok(Size { height, width })
     }
 
     pub fn execute() -> Result<(), Error> {
@@ -70,4 +77,3 @@ impl Terminal {
         Ok(())
     }
 }
-
