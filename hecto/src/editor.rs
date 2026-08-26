@@ -31,17 +31,7 @@ impl Editor {
 
 
     fn draw_empty_rows(&self) -> Result<(), Error> {
-        let Size { height, .. } = Terminal::size()?;
-        for current_row in 0..height {
-            if current_row == height / 3 {
-                self.draw_welcome_message()?;
-            } else {
-                Terminal::print("~")?;
-            }
-            if current_row < height - 1 {
-                Terminal::print("\r\n")?;
-            }
-        }
+        Terminal::print("~")?;
         Ok(())
     }
 
@@ -83,7 +73,12 @@ impl Editor {
         let Size{height, ..}= Terminal::size()?;
         for current_row in 0..height {
             Terminal::clear_line()?;
-            Terminal::print("~")?;
+            if current_row == height / 3{
+                Self::draw_welcome_message(self)?;
+            } else {
+                Self::draw_empty_rows(self)?;
+            }
+
             if current_row < height - 1 {
                 Terminal::print("\r\n")?;
             }
