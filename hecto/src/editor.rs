@@ -3,6 +3,9 @@ use std::io::Error;
 mod terminal;
 use terminal::{Terminal, Size, Position};
 
+const NAME: &str = env!("CARGO_PKG_NAME");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 pub struct Editor {
     should_quit: bool,
 }
@@ -10,6 +13,36 @@ pub struct Editor {
 impl Editor {
     pub const fn default() -> Self {
         Self { should_quit: false }
+    }
+
+    fn draw_welcome_message(&self) -> Result<(), Error> {
+        let welcome_message = format!("{} -- version {}", NAME, VERSION);
+        let mut padding = (Terminal::size()?.width as usize - welcome_message.len()) / 2;
+        if padding > 0 {
+            Terminal::print("~")?;
+            padding -= 1;
+        }
+        for _ in 0..padding {
+            Terminal::print(" ")?;
+        }
+        Terminal::print(&welcome_message)?;
+        Ok(())
+    }
+
+
+    fn draw_empty_rows(&self) -> Result<(), Error> {
+        let Size { height, .. } = Terminal::size()?;
+        for current_row in 0..height {
+            if current_row == height / 3 {
+                self.draw_welcome_message()?;
+            } else {
+                Terminal::print("~")?;
+            }
+            if current_row < height - 1 {
+                Terminal::print("\r\n")?;
+            }
+        }
+        Ok(())
     }
 
     pub fn run(&mut self) {
