@@ -1,33 +1,33 @@
 use crossterm::event::{Event, Event::Key, KeyCode::Char, KeyEvent, KeyModifiers, read};
+use std::io::Error;
 mod terminal;
-use terminal::Terminal;
+use terminal::{Terminal, Size, Position};
 
 pub struct Editor {
     should_quit: bool,
 }
 
 impl Editor {
-    pub fn default() -> Self {
-        Editor { should_quit: false }
+    pub const fn default() -> Self {
+        Self { should_quit: false }
     }
 
     pub fn run(&mut self) {
-        Terminal::initialize();
+        Terminal::initialize().unwrap();
         let result = self.repl();
-        Terminal::terminate();
+        Terminal::terminate().unwrap();
         result.unwrap();
     }
 
-    pub fn repl(&mut self) -> Result<(), std::io::Error> {
+    pub fn repl(&mut self) -> Result<(), Error> {
         loop {
-            let event = read()?;
-            self.evaluate_event(&event);
+            self.refresh_screen()?;
             if self.should_quit {
                 break;
-            } else {
-                self.draw_rows()?;
             }
-            self.refresh_screen()?;
+            let event = read()?;
+            self.evaluate_event(&event);
+
         }
         Ok(())
     }
@@ -47,18 +47,28 @@ impl Editor {
     }
 
     fn draw_rows(&self) -> Result<(), std::io::Error> {
-        let (width, height) = Terminal::size()?;
-        for _ in 0..height {
-            print!("~\r\n");
+        let Size{height, ..}= Terminal::size()?;
+        for current_row in 0..height {
+            Terminal::clear_line()?;
+            Terminal::print("~")?;
+            if current_row < height - 1 {
+                Terminal::print("\r\n")?;
+            }
         }
         Ok(())
     }
 
     fn refresh_screen(&self) -> Result<(), std::io::Error> {
+        Terminal::hide_cursor()?;
         if self.should_quit {
             Terminal::clear_screen()?;
-            print!("Goodbye.\r\n");
+            Terminal::print("Goodbye.\r\n")?;
+        } else {
+            Self::draw_rows(&self)?;
+            Terminal::move_cursor_to(Position { x: 0, y: 0 })?;
         }
+        Terminal::show_cursor()?;
+        Terminal::execute()?;
         Ok(())
     }
 }
