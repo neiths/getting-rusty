@@ -11,10 +11,10 @@ pub struct Size {
     pub width: u16,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Position {
-    pub x: u16,
-    pub y: u16,
+    pub col: usize,
+    pub row: usize,
 }
 
 pub struct Terminal;
@@ -23,7 +23,7 @@ impl Terminal {
     pub fn initialize() -> Result<(), Error> {
         enable_raw_mode()?;
         Self::clear_screen()?;
-        Self::move_cursor_to(Position { x: 0, y: 0 })?;
+        Self::move_cursor_to(Position { col: 0, row: 0 })?;
         Self::execute()
     }
 
@@ -41,7 +41,7 @@ impl Terminal {
     }
 
     pub fn move_cursor_to(position: Position) -> Result<(), Error> {
-        Self::queued_command(MoveTo(position.x, position.y))
+        Self::queued_command(MoveTo(position.col, positon.row))
     }
 
     pub fn hide_cursor() -> Result<(), Error> {
