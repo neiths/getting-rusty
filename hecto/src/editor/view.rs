@@ -7,38 +7,44 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub struct View;
 
 impl View {
-    pub fn render() -> Result<(), std::io::Error> {
+    pub fn render() -> Result<(), Error> {
         let Size { height, .. } = Terminal::size()?;
-        for current_row in 0..height {
+        Terminal::clear_line()?;
+        Terminal::print("Hello, World!\r\n")?;
+        for current_row in 1..height {
             Terminal::clear_line()?;
+
+            #[allow(clippy::integer_division)]
             if current_row == height / 3 {
-                Self::draw_welcome_message(self)?;
+                Self::draw_welcome_message()?;
             } else {
-                Self::draw_empty_rows(self)?;
+                Self::draw_empty_rows()?;
             }
 
-            if current_row < height - 1 {
+            if current_row.saturating_add(1) < height {
                 Terminal::print("\r\n")?;
             }
         }
         Ok(())
     }
 
-    fn draw_welcome_message(&self) -> Result<(), Error> {
-        let welcome_message = format!("{} -- version {}", NAME, VERSION);
-        let mut padding = (Terminal::size()?.width as usize - welcome_message.len()) / 2;
-        if padding > 0 {
-            Terminal::print("~")?;
-            padding -= 1;
-        }
-        for _ in 0..padding {
-            Terminal::print(" ")?;
-        }
+    fn draw_welcome_message() -> Result<(), Error> {
+        let mut welcome_message = format!("{} editor -- version {}", NAME, VERSION);
+        let width = Terminal::size()?.width;
+        let len = welcome_message.len();
+
+        let padding = (width.saturating_sub(len)) / 2;
+
+        let spaces = " ".repeat(padding.saturating_sub(1));
+
+        welcome_message = format!("~{}{}", spaces, welcome_message);
+        welcome_message.truncate(width);
+
         Terminal::print(&welcome_message)?;
         Ok(())
     }
 
-    fn draw_empty_rows(&self) -> Result<(), Error> {
+    fn draw_empty_rows() -> Result<(), Error> {
         Terminal::print("~")?;
         Ok(())
     }
