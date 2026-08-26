@@ -22,10 +22,12 @@ impl Editor {
         loop {
             let event = read()?;
             self.evaluate_event(&event);
-            self.refresh_screen()?;
             if self.should_quit {
                 break;
+            } else {
+                self.draw_rows()?;
             }
+            self.refresh_screen()?;
         }
         Ok(())
     }
@@ -42,6 +44,14 @@ impl Editor {
                 _ => (),
             }
         }
+    }
+
+    fn draw_rows(&self) -> Result<(), std::io::Error> {
+        let (width, height) = Terminal::size()?;
+        for _ in 0..height {
+            print!("~\r\n");
+        }
+        Ok(())
     }
 
     fn refresh_screen(&self) -> Result<(), std::io::Error> {
