@@ -1,4 +1,3 @@
-use core::fmt::Display;
 use crossterm::cursor::{Hide, MoveTo, Show};
 use crossterm::style::Print;
 use crossterm::terminal::{Clear, ClearType, disable_raw_mode, enable_raw_mode, size};
@@ -52,7 +51,7 @@ impl Terminal {
         Self::queued_command(Show)
     }
 
-    pub fn print<T: Display>(text: T) -> Result<(), Error> {
+    pub fn print(text: &str) -> Result<(), Error> {
         Self::queued_command(Print(text))
     }
 
