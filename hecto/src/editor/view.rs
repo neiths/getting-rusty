@@ -18,14 +18,14 @@ impl View {
         self.needs_reddraw = true;
     }
 
-    pub fn render_line(at: usize, line_textL &srt) -> Result<(), Error> {
-        Terminal::set_caret_to(Position { row: at, col: 0 })?;
+    pub fn render_line(at: usize, line_text: &str) -> Result<(), Error> {
+        Terminal::move_caret_to(Position { row: at, col: 0 })?;
         Terminal::clear_line()?;
         Terminal::print(line_text)?;
         Ok(())
     }
 
-    pub fn render(&self) -> Result<(), Error> {
+    pub fn render(&mut self) -> Result<(), Error> {
         if !self.needs_reddraw {
             return Ok(());
         }
