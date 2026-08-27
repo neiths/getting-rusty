@@ -1,5 +1,4 @@
-use super::terminal::{Position, Size, Terminal};
-use std::io::Error;
+use super::terminal::{Size, Terminal};
 mod buffer;
 use buffer::Buffer;
 
@@ -8,31 +7,29 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub struct View {
     buffer: Buffer,
-    needs_reddraw: bool,
+    needs_redraw: bool,
     size: Size,
 }
 
 impl View {
     pub fn resize(&mut self, to: Size) {
         self.size = to;
-        self.needs_reddraw = true;
+        self.needs_redraw = true;
     }
 
-    pub fn render_line(at: usize, line_text: &str) -> Result<(), Error> {
-        Terminal::move_caret_to(Position { row: at, col: 0 })?;
-        Terminal::clear_line()?;
-        Terminal::print(line_text)?;
-        Ok(())
+    fn render_line(at: usize, line_text: &str) {
+        let result = Terminal::print_row(at, line_text);
+        debug_assert!(result.is_ok(), "Failed to render line");
     }
 
-    pub fn render(&mut self) -> Result<(), Error> {
-        if !self.needs_reddraw {
-            return Ok(());
+    pub fn render(&mut self) {
+        if !self.needs_redraw {
+            return;
         }
 
         let Size { height, width } = self.size;
         if height == 0 || width == 0 {
-            return Ok(());
+            return;
         }
 
         #[allow(clippy::integer_division)]
@@ -40,20 +37,19 @@ impl View {
 
         for current_row in 0..height {
             if let Some(line) = self.buffer.lines.get(current_row) {
-                let trancated_line = if line.len() > width {
-                    &line[..width]
+                let trancated_line = if line.len() >= width {
+                    &line[0..width]
                 } else {
                     line
                 };
-                Self::render_line(current_row, trancated_line)?;
+                Self::render_line(current_row, trancated_line);
             } else if current_row == vertical_center && self.buffer.is_empty() {
-                Self::render_line(current_row, &Self::build_welcome_message(width))?;
+                Self::render_line(current_row, &Self::build_welcome_message(width));
             } else {
-                Self::render_line(current_row, "~")?;
+                Self::render_line(current_row, "~");
             }
         }
-        self.needs_reddraw = false;
-        Ok(())
+        self.needs_redraw = false;
     }
 
     fn build_welcome_message(width: usize) -> String {
@@ -68,24 +64,18 @@ impl View {
         }
 
         #[allow(clippy::integer_division)]
-        let padding = (width.saturating_sub(1)) / 2;
+        let padding = (width.saturating_sub(len).saturating_sub(1)) / 2;
 
         let mut full_message = format!("~{}{}", " ".repeat(padding), welcome_message);
         full_message.truncate(width);
-
         full_message
     }
 
-    fn draw_empty_rows() -> Result<(), Error> {
-        Terminal::print("~")?;
-        Ok(())
-    }
-    pub fn load(&mut self, file_name: &str) -> Result<(), Error> {
+    pub fn load(&mut self, file_name: &str) {
         if let Ok(buffer) = Buffer::load(file_name) {
             self.buffer = buffer;
-            self.needs_reddraw = true;
+            self.needs_redraw = true;
         }
-        Ok(())
     }
 }
 
@@ -93,7 +83,7 @@ impl Default for View {
     fn default() -> Self {
         Self {
             buffer: Buffer::default(),
-            needs_reddraw: true,
+            needs_redraw: true,
             size: Terminal::size().unwrap_or_default(),
         }
     }

@@ -1,10 +1,7 @@
 use core::cmp::min;
-use crossterm::event::{
-    Event::{self, Key},
-    KeyCode, KeyEvent, KeyEventKind, KeyModifiers, read,
-};
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers, read};
 use std::{
-    env, 
+    env,
     io::Error,
     panic::{set_hook, take_hook},
 };
@@ -13,13 +10,12 @@ mod view;
 use terminal::{Position, Size, Terminal};
 use view::View;
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Copy, Debug, Default, Clone)]
 struct Location {
     x: usize,
     y: usize,
 }
 
-#[derive(Default)]
 pub struct Editor {
     should_quit: bool,
     location: Location,
@@ -63,25 +59,6 @@ impl Editor {
                 }
             }
         }
-    }
-
-    pub fn handle_args(&mut self) {
-        let args: Vec<String> = env::args().collect();
-        if let Some(file_name) = args.get(1) {
-            self.view.load(file_name);
-        }
-    }
-
-    pub fn repl(&mut self) -> Result<(), Error> {
-        loop {
-            self.refresh_screen();
-            if self.should_quit {
-                break;
-            }
-            let event = read()?;
-            self.evaluate_event(event);
-        }
-        Ok(())
     }
 
     fn move_point(&mut self, key_code: KeyCode) {
@@ -137,7 +114,7 @@ impl Editor {
                     | KeyCode::PageUp
                     | KeyCode::PageDown
                     | KeyCode::Home
-                    | KeyCode::End, 
+                    | KeyCode::End,
                     _,
                 ) => {
                     self.move_point(code);
@@ -151,10 +128,7 @@ impl Editor {
                 #[allow(clippy::as_conversions)]
                 let width = width_u16 as usize;
 
-                self.view.resize(Size {
-                    height,
-                    width,
-                });
+                self.view.resize(Size { height, width });
             }
             _ => {}
         }
@@ -169,5 +143,14 @@ impl Editor {
         });
         let _ = Terminal::show_caret();
         let _ = Terminal::execute();
+    }
+}
+
+impl Drop for Editor {
+    fn drop(&mut self) {
+        let _ = Terminal::terminate();
+        if self.should_quit {
+            let _ = Terminal::print("Goodbye.\r\n");
+        }
     }
 }
