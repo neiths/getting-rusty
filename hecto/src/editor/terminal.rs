@@ -72,7 +72,7 @@ impl Terminal {
     }
 
     pub fn queued_command<T: Command>(command: T) -> Result<(), Error> {
-        queue!(stdout(), command);
+        queue!(stdout(), command);;
         Ok(())
     }
 }
