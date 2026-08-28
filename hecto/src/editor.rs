@@ -7,6 +7,7 @@ use std::{
 };
 mod terminal;
 mod view;
+mod editorcommand;
 use terminal::{Position, Size, Terminal};
 use view::View;
 

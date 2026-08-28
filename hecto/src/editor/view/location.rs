@@ -6,7 +6,7 @@ pub struct Location {
     pub y: usize,
 }
 
-impl From<Loaction> for Position {
+impl From<Location> for Position {
     fn from(loc: Location) -> Self {
         Self {
             col: loc.x,
