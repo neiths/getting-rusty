@@ -7,6 +7,8 @@ use buffer::Buffer;
 mod location;
 use location::Location;
 mod line;
+use std::cmp::min;
+use self::line::Line;
 
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -62,33 +64,35 @@ impl View {
     }
     fn move_text_location(&mut self, direction: &Direction) {
         let Location { mut x, mut y } = self.location;
-        let Size { height, width } = self.size;
+        let Size { height, .. } = self.size;
         match direction {
-            Direction::Up => {
-                y = y.saturating_sub(1);
-            }
-            Direction::Down => {
-                y = y.saturating_add(1);
-            }
+            Direction::Up => y = y.saturating_sub(1),
+            Direction::Down => y = y.saturating_add(1),
             Direction::Left => {
-                x = x.saturating_sub(1);
+                if x > 0 {
+                    x -= 1;
+                } else if y > 0 {
+                    y -= 1;
+                    x = self.buffer.lines.get(y).map_or(0, Line::len);
+                }
             }
             Direction::Right => {
-                x = x.saturating_add(1);
+                let width = self.buffer.lines.get(y).map_or(0, Line::len);
+                if x < width {
+                    x += 1;
+                } else {
+                    y = y.saturating_add(1);
+                    x = 0;
+                }
             }
-            Direction::PageUp => {
-                y = 0;
-            }
-            Direction::PageDown => {
-                y = height.saturating_sub(1);
-            }
-            Direction::Home => {
-                x = 0;
-            }
-            Direction::End => {
-                x = width.saturating_sub(1);
-            }
+            Direction::PageUp => y = y.saturating_sub(height).saturating_sub(1),
+            Direction::PageDown => y = y.saturating_add(height).saturating_sub(1),
+            Direction::Home => x = 0,
+            Direction::End => x = self.buffer.lines.get(y).map_or(0, Line::len),
         }
+        x = self.buffer.lines.get(y).map_or(0, |line| min(line.len(), x));
+        y = min(y, self.buffer.lines.len());
+
         self.location = Location { x, y };
         self.scroll_location_into_view();
     }
