@@ -7,8 +7,8 @@ use buffer::Buffer;
 mod location;
 use location::Location;
 mod line;
-use std::cmp::min;
 use self::line::Line;
+use std::cmp::min;
 
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -90,7 +90,13 @@ impl View {
             Direction::Home => x = 0,
             Direction::End => x = self.buffer.lines.get(y).map_or(0, Line::len),
         }
-        x = self.buffer.lines.get(y).map_or(0, |line| min(line.len(), x));
+
+        x = self
+            .buffer
+            .lines
+            .get(y)
+            .map_or(0, |line| min(line.len(), x));
+
         y = min(y, self.buffer.lines.len());
 
         self.location = Location { x, y };
