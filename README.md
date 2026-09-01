@@ -11,6 +11,7 @@ This repository tracks my learning journey with the Rust programming language, w
 - [embeddings](embeddings) — token embedding example built with Burn
 - [RoPE](RoPE) — rotary positional embedding implementation for transformer-style attention
 - [tiktoken-rs](tiktoken-rs) — tokenizer wrapper using the `tiktoken-rs` crate
+- [hecto](hecto) — terminal text editor in Rust with Unicode grapheme support
 
 ## New implementations
 
@@ -51,12 +52,19 @@ It focuses on:
 
 See [RoPE/README.md](RoPE/README.md) for details.
 
+### 4. hecto
+
+This project is a terminal text editor built in Rust with raw mode terminal handling, 2D scrolling, and full Unicode grapheme cluster awareness.
+
+See [hecto/README.md](hecto/README.md) for details.
+
 ## Quick run commands
 
 ```bash
 cargo run --manifest-path tiktoken-rs/Cargo.toml
 cargo run --manifest-path embeddings/Cargo.toml
 cargo run --manifest-path RoPE/Cargo.toml
+cargo run --manifest-path hecto/Cargo.toml
 ```
 
 ## Notes
