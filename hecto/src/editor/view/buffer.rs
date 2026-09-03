@@ -1,6 +1,7 @@
 use std::fs::read_to_string;
 use std::io::Error;
 
+use super::Location;
 use super::line::Line;
 
 #[derive(Default)]
@@ -17,10 +18,24 @@ impl Buffer {
         }
         Ok(Self { lines })
     }
+
     pub fn is_empty(&self) -> bool {
         self.lines.is_empty()
     }
+
     pub fn height(&self) -> usize {
         self.lines.len()
+    }
+
+    pub fn insert_char(&mut self, character: char, at: Location) {
+        if at.line_index > self.lines.len() {
+            return;
+        }
+
+        if at.line_index == self.lines.len() {
+            self.lines.push(Line::from(&character.to_string()));
+        } else if let Some(line) = self.lines.get_mut(at.line_index) {
+            line.insert_char(character, at.grapheme_index);
+        }
     }
 }

@@ -27,6 +27,10 @@ A lightweight, terminal-based text editor implemented from scratch in Rust. Buil
   - Page jumps (`PageUp` / `PageDown`) and line jumping (`Home` / `End`).
   - Intelligent cursor snapping (`snap_to_valid_grapheme`, `snap_to_valid_line`) preventing out-of-bounds positions when navigating lines of varying lengths.
 
+- **Text Editing**
+  - Character insertion into buffer lines with dynamic grapheme re-segmentation.
+  - Automatic cursor progression and viewport scrolling upon input.
+
 - **Safe & Idiomatic Rust**
   - Built against the Rust 2024 edition.
   - Strict Clippy lint enforcement (`pedantic`, `arithmetic_side_effects`, `as_conversions`, `integer_division`).
@@ -113,7 +117,8 @@ hecto/
 - [x] Multi-directional cursor movement & boundary wrapping
 - [x] 2D horizontal & vertical scrolling
 - [x] Full Unicode & grapheme cluster display width calculation
-- [ ] Text editing (inserting, deleting, backspace, newline)
+- [x] Basic text editing: character insertion
+- [ ] Text editing: deletion (backspace, delete) and line splitting/joining (Enter)
 - [ ] Saving files & dirty buffer tracking
 - [ ] Status bar & interactive command/message prompt
 - [ ] Search & text matching
