@@ -28,8 +28,8 @@ A lightweight, terminal-based text editor implemented from scratch in Rust. Buil
   - Intelligent cursor snapping (`snap_to_valid_grapheme`, `snap_to_valid_line`) preventing out-of-bounds positions when navigating lines of varying lengths.
 
 - **Text Editing**
-  - Character insertion into buffer lines with dynamic grapheme re-segmentation.
-  - Automatic cursor progression and viewport scrolling upon input.
+  - Real-time character insertion, backspace, and deletion with dynamic grapheme re-clustering.
+  - Automatic cursor progression, line wrapping, and viewport scrolling upon editing.
 
 - **Safe & Idiomatic Rust**
   - Built against the Rust 2024 edition.
@@ -78,6 +78,8 @@ hecto/
 | <kbd>End</kbd> | Move cursor to end of current line |
 | <kbd>Page Up</kbd> | Scroll and move cursor up by one screen page |
 | <kbd>Page Down</kbd> | Scroll and move cursor down by one screen page |
+| <kbd>Backspace</kbd> | Delete character to the left of the cursor |
+| <kbd>Delete</kbd> | Delete character under cursor |
 
 ---
 
@@ -117,8 +119,8 @@ hecto/
 - [x] Multi-directional cursor movement & boundary wrapping
 - [x] 2D horizontal & vertical scrolling
 - [x] Full Unicode & grapheme cluster display width calculation
-- [x] Basic text editing: character insertion
-- [ ] Text editing: deletion (backspace, delete) and line splitting/joining (Enter)
+- [x] Basic text editing: character insertion, backspace, and delete
+- [ ] Text editing: line splitting and joining (Enter)
 - [ ] Saving files & dirty buffer tracking
 - [ ] Status bar & interactive command/message prompt
 - [ ] Search & text matching
