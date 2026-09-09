@@ -4,11 +4,11 @@ extern crate opengl_graphics;
 extern crate piston;
 
 use glutin_window::GlutinWindow;
-use graphics::rectangle::square;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::*;
 use piston::input::*;
 use piston::window::WindowSettings;
+use rand::RngExt;
 
 use std::collections::LinkedList;
 use std::iter::FromIterator;
@@ -25,12 +25,12 @@ struct Game {
 }
 
 impl Game {
-    fn render(&mut self, arg: &RenderArgs) {
+    fn render(&mut self, args: &RenderArgs) {
         use graphics;
 
         let green: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
 
-        self.gl.draw(arg.viewport(), |_c, gl| {
+        self.gl.draw(args.viewport(), |_c, gl| {
             graphics::clear(green, gl);
         });
 
@@ -38,42 +38,67 @@ impl Game {
         self.food.render(&mut self.gl, args, self.square_width);
     }
 
-    fn update(&mut self) {
-        self.snake.update();
+    fn update(&mut self, _ : &UpdateArgs) -> bool {
+        if !self.snake.update(self.just_eaten, self.cols, self.rows) {
+            return false;
+        }
+
+        if self.just_eaten {
+            self.score += 1;
+            self.just_eaten = false;
+        }
+
+        self.just_eaten = self.food.update(&self.snake);
+
+        if self.just_eaten {
+
+            let mut rng = rand::rng();
+
+            loop {
+                let new_x = rng.random_range(0..=self.cols);
+                let new_y = rng.random_range(0..=self.rows);
+
+                if !self.snake.is_collide(new_x, new_y) {
+                    self.food = Food { x:new_x, y: new_y };
+                    break;
+                }
+            }
+        }
+        true
+
     }
 
     fn pressed(&mut self, btn: &Button) {
-        let last_direction = self.snake.dir.clone();
-
-        self.snake.dir = match btn {
-            &Button::Keyboard(Key::Up) if last_direction != Direction::Down => Direction::Up,
-            &Button::Keyboard(Key::Down) if last_direction != Direction::Up => Direction::Down,
-            &Button::Keyboard(Key::Left) if last_direction != Direction::Right => Direction::Left,
-            &Button::Keyboard(Key::Right) if last_direction != Direction::Left => Direction::Right,
+        let last_direction = self.snake.d.clone();
+        self.snake.d = match btn {
+            &Button::Keyboard(Key::Up) if last_direction != Direction::DOWN => Direction::UP,
+            &Button::Keyboard(Key::Down) if last_direction != Direction::UP => Direction::DOWN,
+            &Button::Keyboard(Key::Left) if last_direction != Direction::RIGHT => Direction::LEFT,
+            &Button::Keyboard(Key::Right) if last_direction != Direction::LEFT => Direction::RIGHT,
             _ => last_direction,
-        }
+        };
     }
 }
 
 struct Snake {
     gl: GlGraphics,
-    snake_parts: LinkedList<(i32, i32)>,
+    snake_parts: LinkedList<SnakePiece>,
     width: u32,
     d: Direction,
 }
 
 #[derive(Clone)]
-pub struct Snake_Piece(u32, u32);
+pub struct SnakePiece(u32, u32);
 
 impl Snake {
-    pub fn render(&mut self, arg: &RenderArgs) {
+    pub fn render(&mut self, args: &RenderArgs) {
         use graphics;
 
-        let red: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
-        let squares: Vec<graphics::types::Rectangle> = self
-            .snake_parts
+        const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
+
+        let squares: Vec<graphics::types::Rectangle> = self.snake_parts
             .iter()
-            .map(|p| Snake_Piece(p.0 * self.width, p.1 * self.width))
+            .map(|p| SnakePiece(p.0 * self.width, p.1 * self.width))
             .map(|p| graphics::rectangle::square(p.0 as f64, p.1 as f64, self.width as f64))
             .collect();
 
@@ -82,13 +107,12 @@ impl Snake {
 
             squares
                 .into_iter()
-                .for_each(|square| graphics::rectangle(red, square, transform, gl));
+                .for_each(|square| graphics::rectangle(RED, square, transform, gl));
         })
     }
 
-    /// Move the snake if valid, otherwise returns false.
     pub fn update(&mut self, just_eaten: bool, cols: u32, rows: u32) -> bool {
-        let mut new_front: Snake_Piece =
+        let mut new_front: SnakePiece =
             (*self.snake_parts.front().expect("No front of snake found.")).clone();
 
         if (self.d == Direction::UP && new_front.1 == 0)
@@ -126,10 +150,10 @@ impl Snake {
 
 #[derive(Clone, PartialEq)]
 enum Direction {
-    Right,
-    Left,
-    Up,
-    Down,
+    RIGHT,
+    LEFT,
+    UP,
+    DOWN,
 }
 
 struct Food {
@@ -169,29 +193,47 @@ impl Food {
 fn main() {
     let opengl = OpenGL::V3_2;
 
-    let mut window: GlutinWindow = WindowSettings::new("Snake Game", [200, 200])
+    const COLS: u32 = 30;
+    const ROWS: u32 = 20;
+    const SQUARE_WIDTH: u32 = 20;
+
+    let width = COLS * SQUARE_WIDTH;
+    let height = ROWS * SQUARE_WIDTH;
+
+    let mut window: GlutinWindow = WindowSettings::new("Snake Game", [width, height])
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
         .unwrap();
 
+
     let mut game = Game {
         gl: GlGraphics::new(opengl),
+        rows: ROWS,
+        cols: COLS,
+        square_width: SQUARE_WIDTH,
+        just_eaten: false,
+        food: Food { x: 1, y: 1 },
+        score: 0,
         snake: Snake {
-            pos_x: 9,
-            pos_y: 9,
-            dir: Direction::Right,
+            gl: GlGraphics::new(opengl),
+            snake_parts: LinkedList::from_iter((vec![SnakePiece(COLS / 2, ROWS / 2)]).into_iter()),
+            width: SQUARE_WIDTH,
+            d: Direction::DOWN,
         },
     };
 
-    let mut events = Events::new(EventSettings::new()).ups(8);
+
+    let mut events = Events::new(EventSettings::new()).ups(10);
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
             game.render(&r);
         }
 
-        if let Some(_) = e.update_args() {
-            game.update();
+        if let Some(u) = e.update_args() {
+            if !game.update(&u) {
+                break;
+            }
         }
 
         if let Some(k) = e.button_args() {
@@ -200,4 +242,5 @@ fn main() {
             }
         }
     }
+    println!("Congratulations, your score was: {}", game.score);
 }
