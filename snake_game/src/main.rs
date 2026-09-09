@@ -82,20 +82,45 @@ impl Snake {
 
             squares
                 .into_iter()
-                .for_each(|square| graphics::rectangle(RED, square, transform, gl));
+                .for_each(|square| graphics::rectangle(red, square, transform, gl));
         })
     }
 
-    fn update(&mut self) {
-        let mut new_head = (*&self.body.front().expect("Snake has not body")).clone();
-        match self.dir {
-            Direction::Right => new_head.0 += 1,
-            Direction::Left => new_head.0 -= 1,
-            Direction::Up => new_head.1 -= 1,
-            Direction::Down => new_head.1 += 1,
+    /// Move the snake if valid, otherwise returns false.
+    pub fn update(&mut self, just_eaten: bool, cols: u32, rows: u32) -> bool {
+        let mut new_front: Snake_Piece =
+            (*self.snake_parts.front().expect("No front of snake found.")).clone();
+
+        if (self.d == Direction::UP && new_front.1 == 0)
+            || (self.d == Direction::LEFT && new_front.0 == 0)
+            || (self.d == Direction::DOWN && new_front.1 == rows - 1)
+            || (self.d == Direction::RIGHT && new_front.0 == cols - 1)
+        {
+            return false;
         }
-        self.body.push_front(new_head);
-        self.body.pop_back().unwrap();
+
+        match self.d {
+            Direction::UP => new_front.1 -= 1,
+            Direction::DOWN => new_front.1 += 1,
+            Direction::LEFT => new_front.0 -= 1,
+            Direction::RIGHT => new_front.0 += 1,
+        }
+
+        if !just_eaten {
+            self.snake_parts.pop_back();
+        }
+
+        // Checks self collision.
+        if self.is_collide(new_front.0, new_front.1) {
+            return false;
+        }
+
+        self.snake_parts.push_front(new_front);
+        true
+    }
+
+    fn is_collide(&self, x: u32, y: u32) -> bool {
+        self.snake_parts.iter().any(|p| x == p.0 && y == p.1)
     }
 }
 
@@ -110,6 +135,35 @@ enum Direction {
 struct Food {
     x: u32,
     y: u32,
+}
+
+impl Food {
+    // Return true if snake ate food this update
+    fn update(&mut self, s: &Snake) -> bool {
+        let front = s.snake_parts.front().unwrap();
+        if front.0 == self.x && front.1 == self.y {
+            true
+        } else {
+            false
+        }
+    }
+
+    fn render(&mut self, gl: &mut GlGraphics, args: &RenderArgs, width: u32) {
+        use graphics;
+
+        const BLACK: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+
+        let x = self.x * width;
+        let y = self.y * width;
+
+        let square = graphics::rectangle::square(x as f64, y as f64, width as f64);
+
+        gl.draw(args.viewport(), |c, gl| {
+            let transform = c.transform;
+
+            graphics::rectangle(BLACK, square, transform, gl)
+        });
+    }
 }
 
 fn main() {
