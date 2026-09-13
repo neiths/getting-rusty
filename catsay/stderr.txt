@@ -1,0 +1,4 @@
+   Compiling catsay v0.1.0 (/home/thienhb/Workspace/getting-rusty/catsay)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running `target/debug/catsay woof`
+A cat shouldn't bark like a dog.
