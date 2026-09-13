@@ -2,6 +2,8 @@ use clap::Parser;
 
 #[derive(Parser)]
 struct Options {
+    #[clap(default_value = "Meow!")]
+    /// What does the cat say?
     message: String, // [1]
 }
 
