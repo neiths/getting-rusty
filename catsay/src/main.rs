@@ -1,5 +1,6 @@
 use clap::Parser;
 use colored::Colorize;
+use anyhow::{Context, Result};
 
 #[derive(Parser)]
 struct Options {
@@ -28,7 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match &options.catfile {
         Some(path) => {
-            let cat_template = std::fs::read_to_string(path)?;
+            let cat_template = std::fs::read_to_string(path).with_context(|| format!("Could not read file {:?}", path))?;
             let eye = format!("{}", eye.red().bold());
             let cat_picture = cat_template.replace("{eye}", &eye);
             println!("{}", message.bright_yellow().underline().on_purple());
