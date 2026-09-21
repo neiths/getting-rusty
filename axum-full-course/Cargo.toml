@@ -1,0 +1,61 @@
+[workspace]
+resolver = "2"
+members = ["module-1-intro"]
+
+# Shared dependencies across all modules
+[workspace.dependencies]
+# Core Axum Framework
+axum = "0.8.8"
+axum-extra = { version = "0.12.6", features = [
+  "typed-header",
+  "query",
+  "multipart",
+] }
+
+# Async Runtime
+tokio = { version = "1.42", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Tower Ecosystem
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = [
+  "cors",
+  "compression-gzip",
+  "timeout",
+  "trace",
+  "fs",
+  "limit",
+] }
+
+# Database
+sqlx = { version = "0.8", features = [
+  "runtime-tokio",
+  "postgres",
+  "uuid",
+  "chrono",
+] }
+
+# Authentication
+jsonwebtoken = "9.3"
+argon2 = "0.5"
+
+# Error Handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+# Logging & Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Utilities
+uuid = { version = "1.11", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+dotenvy = "0.15"
+futures = "0.3"
+
+# Testing
+tower-service = "0.3"
+http-body-util = "0.1"
