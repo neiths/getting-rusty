@@ -1,0 +1,8 @@
+[package]
+name = "uzu-engine"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "1.54.1", features = ["full"] }
+uzu = { git = "https://github.com/trymirai/uzu", branch = "main", package = "uzu" }
